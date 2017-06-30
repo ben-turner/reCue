@@ -1,6 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../bower_components/iron-icons/maps-icons.html">
@@ -17,53 +15,41 @@
       }
     </style>
 
-    <iron-ajax
-    url="http://requestb.in/1fvxhox1"
-    handle-as="text"
-    last-response="{{requestData}}"
-    auto="true">
-  </iron-ajax>
-  <iron-localstorage name="my-app-storage"
-  value="{{requestData}}">
-</iron-localstorage>
+    <div class="card">
+      <h1>reCue</h1>
+      <table class="cue-list">
+        <thead>
+          <th>#</th>
+          <th style="width: 100%;">Name</th>
+          <th>Pre</th>
+          <th>Time</th>
+          <th>Post</th>
+          <th><iron-icon icon="editor:vertical-align-bottom"></iron-icon></th>
+          <th><iron-icon icon="maps:my-location"></iron-icon></th>
+        </thead>
+        <tbody>
+          <template is="dom-repeat" items="{{cues}}">
+            <tr>
+              <td><input type="text" value="{{item.number::change}}"></td>
+              <td><input type="text" value="{{item.text::change}}"></td>
+              <td><input type="text" value="{{item.timing.pre::change}}"></td>
+              <td><input type="text" value="{{item.timing.run::change}}"></td>
+              <td><input type="text" value="{{item.timing.post::change}}"></td>
+              <td><paper-checkbox checked="{{item.follow}}" noink></paper-checkbox></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </template>
 
-
-
-<div class="card">
-  <h1>reCue</h1>
-  <table class="cue-list">
-    <thead>
-      <th>#</th>
-      <th style="width: 100%;">Name</th>
-      <th>Pre</th>
-      <th>Time</th>
-      <th>Post</th>
-      <th><iron-icon icon="editor:vertical-align-bottom"></iron-icon></th>
-      <th><iron-icon icon="maps:my-location"></iron-icon></th>
-    </thead>
-    <tbody>
-      <template is="dom-repeat" items="{{cues}}">
-        <tr>
-          <td>{{item.number}}</td>
-          <td>{{item.text}}</td>
-          <td>{{item.timing.pre}}</td>
-          <td>{{item.timing.run}}</td>
-          <td>{{item.timing.post}}</td>
-          <td><paper-checkbox checked="{{item.follow}}" noink></paper-checkbox></td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
-</div>
-</template>
-
-<script>
-  class ViewEditor extends Polymer.Element {
-    static get properties() {
-      return {
-        cues: {
-          type: Array,
-          value: [
+  <script>
+    class ViewEditor extends Polymer.Element {
+      static get properties() {
+        return {
+          cues: {
+            type: Array,
+            value: [
             {
               number: 1,
               text: 'Doorbell',
@@ -84,14 +70,14 @@
               },
               follow: false
             }
-          ]
-        }
-      };
+            ]
+          },
+        };
+      }
+
+      static get is() { return 'view-editor'; }
     }
 
-    static get is() { return 'view-editor'; }
-  }
-
-  window.customElements.define(ViewEditor.is, ViewEditor);
-</script>
+    window.customElements.define(ViewEditor.is, ViewEditor);
+  </script>
 </dom-module>

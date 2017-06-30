@@ -20,6 +20,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app-script.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth-script.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-database-script.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-storage-script.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-messaging-script.html">
 <link rel="import" href="my-icons.html">
 
 <dom-module id="my-app">
@@ -62,6 +71,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-weight: bold;
       }
     </style>
+
+    <firebase-app database-url="https://recue-1428b.firebaseio.com" storage-bucket="recue-1428b.appspot.com" api-key="AIzaSyAUEyVCyhXNV_q69WQdkW3IIYNKHQ-wa5U" messaging-sender-id="716013588136" auth-domain="recue-1428b.firebaseapp.com"></firebase-app>
+    <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError"></firebase-auth>
+
+    <paper-dialog id="signInDialog">
+      <h1>Sign in to reCue</h1>
+      <h2>Choose a provider:</h2>
+      <paper-button raised onclick="console.log(this.$);">Google</paper-button><paper-button raised onclick="">Email</paper-button><paper-button raised onclick="this.signIn('offline');">Use Offline</paper-button>
+    </paper-dialog>
 
     <app-location route="{{route}}"></app-location>
     <app-route
@@ -118,11 +136,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // If no page was found in the route data, page will be an empty string.
         // Deault to 'splash' in that case.
         this.page = page || 'splash';
-
-        // Close a non-persistent drawer when the page & route are changed.
-        if (!this.$.drawer.persistent) {
-          this.$.drawer.close();
-        }
       }
 
       _pageChanged(page) {
@@ -137,6 +150,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _showPage404() {
         this.page = '404';
+      }
+
+      ready() {
+        super.ready();
+        if (!this.$.auth.signedIn) {
+          this.$.signInDialog.open();
+        }
+
+        //this.$.auth.signInWithPopup('email')
+        //  .then(function(a) {
+        //    console.log(a);
+        //  })
+        //  .catch(function(a) {
+        //    console.log(a);
+        //  });
+      }
+
+      signIn() {
+        this.$.auth.signInWithPopup()
+          .then(function(a) {
+            console.log('signed in ', a);
+          })
+          .catch(function(a) {
+            console.log(a);
+          });
       }
     }
 
