@@ -78,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="signInDialog">
       <h1>Sign in to reCue</h1>
       <h2>Choose a provider:</h2>
-      <paper-button raised onclick="console.log(this.$);">Google</paper-button><paper-button raised onclick="">Email</paper-button><paper-button raised onclick="this.signIn('offline');">Use Offline</paper-button>
+      <paper-button raised>Google</paper-button><paper-button raised>Email</paper-button><paper-button raised id="signOff">Use Offline</paper-button>
     </paper-dialog>
 
     <app-location route="{{route}}"></app-location>
@@ -92,6 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Main content -->
       <app-header-layout has-scrolling-region>
 
+      Hello {{user.displayName}}
         <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
@@ -156,25 +157,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         super.ready();
         if (!this.$.auth.signedIn) {
           this.$.signInDialog.open();
+          this.$.signOff.addEventListener('click', this.signIn.bind(this));
         }
-
-        //this.$.auth.signInWithPopup('email')
-        //  .then(function(a) {
-        //    console.log(a);
-        //  })
-        //  .catch(function(a) {
-        //    console.log(a);
-        //  });
       }
 
-      signIn() {
-        this.$.auth.signInWithPopup()
-          .then(function(a) {
-            console.log('signed in ', a);
-          })
-          .catch(function(a) {
-            console.log(a);
-          });
+      async signIn() {
+        try {
+          const {user, credential, operationType} = await this.$.auth.signInWithPopup();
+          this.user = user;
+        } catch (e) {
+          console.error(`Failed to authenticate: ${e}`);
+        }
       }
     }
 
